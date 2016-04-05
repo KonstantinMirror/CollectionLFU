@@ -9,12 +9,12 @@ public class ParserString {
 
 	public static Map<String, Integer> getAllWords(String string) {
 		final String WORD_SPLITER = "\\w+";
-		final int START_VALUE = 0;
+		final int START_VALUE = 1;
 		Pattern pattern = Pattern.compile(WORD_SPLITER);
 		Matcher matcher = pattern.matcher(string);
 		Map<String, Integer> words = new HashMap<>();
 		while (matcher.find()) {
-			String currentWord = matcher.group();
+			String currentWord = matcher.group().toLowerCase();
 			if (words.containsKey(currentWord)) {
 				int currentValue = words.get(currentWord);
 				words.put(currentWord, ++currentValue);

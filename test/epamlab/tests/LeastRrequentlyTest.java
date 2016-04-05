@@ -1,4 +1,4 @@
-package epamlab.util;
+package epamlab.tests;
 
 import static org.junit.Assert.*;
 
