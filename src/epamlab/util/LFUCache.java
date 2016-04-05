@@ -3,40 +3,79 @@ package epamlab.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class LFUCache<T> {
+public class LFUCache<K, V> {
 
 	private final int CACHE_SIZE;
 	private final double EVICTION_FACTOR;
-	private final int START_VALUE = 0;
 
-	private Map<T, Integer> map;
-	private List<List<T>> listRow;
-	private List<T> row;
+	private Map<K, V> map;
+	private List<List<K>> listRow;
+	private List<K> row;
 
-	public LFUCache(int size, double ecictionFactor) {
+	public LFUCache(int size, double evictionFactor) {
 		super();
 		CACHE_SIZE = size;
-		EVICTION_FACTOR = ecictionFactor;
+		EVICTION_FACTOR = evictionFactor;
 		map = new HashMap<>();
-		listRow = new ArrayList<>();
+		listRow = new ArrayList<>(CACHE_SIZE);
 		for (int i = CACHE_SIZE; i > 0; i--) {
-			listRow.add(new ArrayList<>());
+			listRow.add(new ArrayList<>(CACHE_SIZE));
 
 		}
 		row = new ArrayList<>();
 	}
 
-	public void put(T t) {
-
-		if (!map.containsKey(t)) {
-			listRow.get(0).add(t);
+	public void put(K k, V v) {
+		if (!map.containsKey(k)) {
+			map.put(k, v);
+			listRow.get(0).add(k);
 		}
 	}
 
-	public T get(T t) {
+	
+	
+	
+	
+	
+	
+	
+	
+	private class Pair {
+		private long row;
+		private long line;
+
+		public Pair() {
+		}
+
+		public Pair(long row, long line) {
+			super();
+			this.row = row;
+			this.line = line;
+		}
+
+		public long getRow() {
+			return row;
+		}
+
+		public void setRow(long row) {
+			this.row = row;
+		}
+
+		public long getLine() {
+			return line;
+		}
+
+		public void setLine(long line) {
+			this.line = line;
+		}
+
+	}
+
+	public K get(K t) {
 		if (map.containsKey(t)) {
 			int countGet = map.get(t);
 			map.put(t, countGet + 1);
@@ -50,20 +89,20 @@ public class LFUCache<T> {
 
 	private void evict() {
 		long evictElements = Math.round(EVICTION_FACTOR * CACHE_SIZE);
-		for (List<T> listDate : listRow ) {
-			
-			if(!listDate.isEmpty()){
-				Iterator<T> iterator = listDate.iterator();
+		for (List<K> listDate : listRow) {
+
+			if (!listDate.isEmpty()) {
+				Iterator<K> iterator = listDate.iterator();
 				while (iterator.hasNext()) {
-					T t = iterator.next();
+					K t = iterator.next();
 					map.remove(t);
 					iterator.remove();
 					evictElements--;
-					if(evictElements == 0){
-						
+					if (evictElements == 0) {
+
 					}
 				}
- 			}
+			}
 		}
 	}
 }
