@@ -20,8 +20,10 @@ public class LeastRrequentlyTest {
 		cache.print();
 		for (int i = 0; i < 10; i++) {
 			cache.get("hello");
+			cache.get("world");
 		}
 		cache.print();
+		cache.get("hello");
 		cache.print();
 		cache.put("Zip", 3);
 		cache.print();

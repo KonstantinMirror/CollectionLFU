@@ -64,11 +64,11 @@ public class LFUCache<K, V> {
 		if (cache.containsKey(k)) {
 			Pair<V> pair = cache.get(k);
 			int row = pair.getRow();
-			if (row < CACHE_SIZE - 1) {
-				listRow.get(pair.getRow()).remove(k);
-				pair.setRow(row + 1);
-				listRow.get(pair.getRow()).add(k);
+			listRow.get(pair.getRow()).remove(k);
+			if(row < CACHE_SIZE - 1){
+			pair.setRow(row + 1);
 			}
+			listRow.get(pair.getRow()).add(k);
 			return pair.getValue();
 		} else {
 			return null;
