@@ -57,6 +57,8 @@ public class LFUCache<K, V> {
 		if (!cache.containsKey(k)) {
 			listRow.get(0).add(k);
 			cache.put(k, new Pair<>(v, 0));
+		}else{
+			cache.get(k).setValue(v);
 		}
 	}
 
