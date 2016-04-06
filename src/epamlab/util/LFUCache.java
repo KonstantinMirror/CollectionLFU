@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,77 +27,84 @@ public class LFUCache<K, V> {
 		}
 	}
 
+	public void print() {
+		for (Set<K> set : listRow) {
+			System.out.println(set);
+		}
+		System.out.println("------------------------");
+
+	}
+
 	public void put(K k, V v) {
+		if (map.size() > CACHE_SIZE) {
+			evict();
+		}
 		if (!map.containsKey(k)) {
-			listRow.get(0).add(k);			
+			listRow.get(0).add(k);
 			map.put(k, new Pair<>(v, 0));
 		}
 	}
 
-	
-
-	public K get(K k) {
+	public V get(K k) {
 		if (map.containsKey(k)) {
-			Pair<V> value = map.get(k);
-			
-			map.put(k, countGet + 1);
-			if (!(countGet > CACHE_SIZE)) {
-				listRow.get(countGet - 1).remove(k);
-				listRow.get(countGet).add(k);
+			Pair<V> pair = map.get(k);
+			int row = pair.getRow();
+			if (row < CACHE_SIZE - 1) {
+				listRow.get(pair.getRow()).remove(k);
+				pair.setRow(row + 1);
+				listRow.get(pair.getRow()).add(k);
 			}
+			return pair.getValue();
+		} else {
+			return null;
 		}
-		return k;// ?????
+
 	}
 
 	private void evict() {
-		long evictElements = Math.round(EVICTION_FACTOR * CACHE_SIZE);
-		for (List<K> listDate : listRow) {
-			if (!listDate.isEmpty()) {
-				Iterator<K> iterator = listDate.iterator();
-				while (iterator.hasNext()) {
-					K t = iterator.next();
-					map.remove(t);
-					iterator.remove();
-					evictElements--;
-					if (evictElements == 0) {
-
-					}
-				}
+		int countEvict = (int) Math.round(CACHE_SIZE * EVICTION_FACTOR);
+		for (Set<K> set : listRow) {
+			Iterator<K> iterator = set.iterator();
+			while (countEvict > 0 && iterator.hasNext()) {
+				map.remove(iterator.next());
+				iterator.remove();
+				countEvict--;
 			}
 		}
 	}
-	
-	
-	
-	
-	
+
 	private class Pair<T> {
 		private T t;
-		private long row;
+		private int row;
 
 		public Pair() {
 		}
 
-		public Pair(T t, long row) {
+		public Pair(T t, int row) {
 			super();
 			this.row = row;
 			this.t = t;
 		}
 
-		public T getK() {
+		public T getValue() {
 			return t;
 		}
 
-		public void setK(T t) {
+		public void setValue(T t) {
 			this.t = t;
 		}
 
-		public long getRow() {
+		public int getRow() {
 			return row;
 		}
 
-		public void setRow(long row) {
+		public void setRow(int row) {
 			this.row = row;
+		}
+
+		@Override
+		public String toString() {
+			return "Pair [t=" + t + ", row=" + row + "]";
 		}
 
 	}
