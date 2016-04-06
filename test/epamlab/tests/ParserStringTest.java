@@ -9,16 +9,16 @@ import org.junit.Test;
 import epamlab.util.ParserString;
 
 public class ParserStringTest {
-	
-	
 
 	@Test
 	public void test() {
-
-		Map<String, Integer> words = ParserString.getAllWords("Hello World");
+		ParserString parserString = new ParserString();
+		Map<String, Integer> words = parserString.getAllWords("Hello World");
 		assertTrue(words.size() == 2);
-
-		words = ParserString.getAllWords("WORLD world Hello_world HelloWorld ");
+		System.out.println(parserString.getWordFrequency("hello"));
+		System.out.println(parserString.getWordFrequency("Hello"));
+		System.out.println(parserString.getWordFrequency("zip"));
+		words = parserString.getAllWords("WORLD world Hello_world HelloWorld ");
 		assertTrue(words.get("world") == 2);
 	}
 

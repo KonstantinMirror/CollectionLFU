@@ -13,14 +13,29 @@ public class LFUCache<K, V> {
 	private final int CACHE_SIZE;
 	private final double EVICTION_FACTOR;
 
-	private Map<K, Pair<V>> map;
+	private Map<K, Pair<V>> cache;
 	private List<Set<K>> listRow;
 
+	public Map<K, Pair<V>> getCache() {
+		return cache;
+	}
+
+	public void setCache(Map<K, Pair<V>> cache) {
+		this.cache = cache;
+	}
+
+	public List<Set<K>> getListRow() {
+		return listRow;
+	}
+
+	public void setListRow(List<Set<K>> listRow) {
+		this.listRow = listRow;
+	}
+
 	public LFUCache(int size, double evictionFactor) {
-		super();
 		CACHE_SIZE = size;
 		EVICTION_FACTOR = evictionFactor;
-		map = new HashMap<>();
+		cache = new HashMap<>();
 		listRow = new ArrayList<>(CACHE_SIZE);
 		for (int i = CACHE_SIZE; i > 0; i--) {
 			listRow.add(new LinkedHashSet<>());
@@ -36,18 +51,18 @@ public class LFUCache<K, V> {
 	}
 
 	public void put(K k, V v) {
-		if (map.size() > CACHE_SIZE) {
+		if (cache.size() >= CACHE_SIZE) {
 			evict();
 		}
-		if (!map.containsKey(k)) {
+		if (!cache.containsKey(k)) {
 			listRow.get(0).add(k);
-			map.put(k, new Pair<>(v, 0));
+			cache.put(k, new Pair<>(v, 0));
 		}
 	}
 
 	public V get(K k) {
-		if (map.containsKey(k)) {
-			Pair<V> pair = map.get(k);
+		if (cache.containsKey(k)) {
+			Pair<V> pair = cache.get(k);
 			int row = pair.getRow();
 			if (row < CACHE_SIZE - 1) {
 				listRow.get(pair.getRow()).remove(k);
@@ -66,7 +81,7 @@ public class LFUCache<K, V> {
 		for (Set<K> set : listRow) {
 			Iterator<K> iterator = set.iterator();
 			while (countEvict > 0 && iterator.hasNext()) {
-				map.remove(iterator.next());
+				cache.remove(iterator.next());
 				iterator.remove();
 				countEvict--;
 			}
